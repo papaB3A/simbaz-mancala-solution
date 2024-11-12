@@ -90,7 +90,7 @@
   transition: background-color 0.3s ease;
 }
 
-.midSection .topPot, .midSection .btmPot {
+.midSection .pot{
   cursor: pointer;
 }
 
