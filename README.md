@@ -50,7 +50,7 @@ To get a local copy up and running, follow these steps:
 ### Installation
 1. Clone the repo:
    ```bash
-   git clone git@github.com:JOB-WAYNE/Mnacala.git
+   git clone git@github.com:papaB3A/simbaz-mancala-solution.git
 
 ## Technologies Used
 HTML: Markup for structuring the game interface.
