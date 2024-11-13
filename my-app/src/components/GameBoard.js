@@ -1,117 +1,204 @@
-import React, { useState, useEffect } from "react";
-import Pit from "./Pit"; //Pit component for each pot
-import Mancala from "./Mancala";//Mncala component for each mancala
+import React, { useState, useEffect, useCallback } from "react";
+import Pit from "./Pit";
+import Mancala from "./Mancala";
 
 function GameBoard() {
-  //State
-  const [currentPlayer, setCurrentPlayer] = useState("btmPlayer");//keeps track of which player’s turn it is...initialized to btmPlayer
-  const [allPotsOrdered, setAllPotsOrdered] = useState([]);//store all the potz and mancala...ordered
-  const [highlightedPot, setHighlightedPot] = useState(null);//keeps track of current highlighted pot on hover
-  const [targetPot, setTargetPot] = useState(null);//keeps track of the target pot...beads will be distributed to it
+  const [gameState, setGameState] = useState({
+    playerOne: Array(6).fill(4), // 6 pits with 4 beads each
+    playerTwo: Array(6).fill(4), // 6 pits with 4 beads each
+    mancala: { playerOne: 0, playerTwo: 0 }, // Mancalas start with 0 beads
+    currentPlayer: "playerOne", // Player One starts
+  });
 
-  //this hook generates the pots when the component mounts
+  const [gameOver, setGameOver] = useState(false);
+  const [autoplayInterval, setAutoplayInterval] = useState(null);
+
+  // Auto-play logic
   useEffect(() => {
-    const pots = generatePots();
-    setAllPotsOrdered(pots);
-  }, []);//Empty dependency array...runs only once when the component mounts
+    const intervalId = autoPlayGame();
+    setAutoplayInterval(intervalId);
 
-  //generates all the pots and mancala with 4 beads
-  const generatePots = () => {
-    let pots = [];
+    return () => clearInterval(autoplayInterval);
+  }, []);
 
-    //6 pots for the top player (top row)
-    for (let i = 1; i <= 6; i++) {
-      pots.push({ id: `topPot${i}`, type: "topPot", beads: 4 });
+  // Check if the game is over whenever gameState changes
+  useEffect(() => {
+    const playerOneEmpty = gameState.playerOne.every((count) => count === 0);
+    const playerTwoEmpty = gameState.playerTwo.every((count) => count === 0);
+
+    if (playerOneEmpty || playerTwoEmpty) {
+      endGame();
     }
-    //mancala for the top player
-    pots.push({ id: "mancala2", type: "mancala", beads: 0 });
-    for (let i = 6; i >= 1; i--) {
-      pots.push({ id: `btmPot${i}`, type: "btmPot", beads: 4 });
+  }, [gameState, endGame]);
+
+  // Memoized endGame function to avoid re-creating it on every render
+  const endGame = useCallback(() => {
+    setGameOver(true);
+    clearInterval(autoplayInterval);
+
+    // Calculate the final score for both players
+    const playerOneTotal =
+      gameState.mancala.playerOne +
+      gameState.playerOne.reduce((sum, count) => sum + count, 0);
+    const playerTwoTotal =
+      gameState.mancala.playerTwo +
+      gameState.playerTwo.reduce((sum, count) => sum + count, 0);
+
+    // Determine the winner
+    let winner = null;
+    if (playerOneTotal > playerTwoTotal) {
+      winner = "Player One";
+    } else if (playerTwoTotal > playerOneTotal) {
+      winner = "Player Two";
+    } else {
+      winner = "It's a tie!";
     }
-    //mancala for the btm player
-    pots.push({ id: "mancala1", type: "mancala", beads: 0 });
-    return pots;//Returns the array of pots and mancalaz
-  };
 
-  //returns the id of the target pot
-  const getAnticlockwisePot = (currentPotId) => {
-    const index = allPotsOrdered.findIndex(pot => pot.id === currentPotId);
-    if (index === -1) return null;
+    alert(
+      `Game Over! ${winner} wins with ${playerOneTotal} (p1) vs ${playerTwoTotal} (p2)`
+    );
+  }, [gameState, autoplayInterval]);
 
-    let steps = 0;
-    let anticlockwiseIndex = index;
+  // Function to distribute beads when a pit is clicked
+  const distributeBeads = (player, index) => {
+    setGameState((prevState) => {
+      const newGameState = { ...prevState };
+      const playerPits =
+        player === "playerOne"
+          ? [...newGameState.playerOne]
+          : [...newGameState.playerTwo];
+      let beads = playerPits[index];
+      playerPits[index] = 0;
+      let currentIndex = index + 1;
 
-    while (steps < 4) {
-      anticlockwiseIndex = (anticlockwiseIndex + 1) % allPotsOrdered.length;
-      const pot = allPotsOrdered[anticlockwiseIndex];
-      if (currentPlayer === "btmPlayer" && pot.id !== "mancala1") {
-        steps++;
-      } else if (currentPlayer === "topPlayer" && pot.id !== "mancala2") {
-        steps++;
+      while (beads > 0) {
+        if (currentIndex < 6) {
+          // Drop bead in the next pit
+          playerPits[currentIndex]++;
+          beads--;
+        } else if (currentIndex === 6) {
+          // Drop bead in the player's Mancala
+          if (newGameState.currentPlayer === player) {
+            newGameState.mancala[player]++;
+            beads--;
+          }
+        } else if (currentIndex > 6 && currentIndex < 13) {
+          // Drop bead in opponent's pits
+          const opponentIndex = 12 - currentIndex;
+          const opponentPits =
+            player === "playerOne"
+              ? [...newGameState.playerTwo]
+              : [...newGameState.playerOne];
+          opponentPits[opponentIndex]++;
+          if (player === "playerOne") {
+            newGameState.playerTwo = opponentPits;
+          } else {
+            newGameState.playerOne = opponentPits;
+          }
+          beads--;
+        } else if (currentIndex === 13) {
+          // Drop bead in opponent's Mancala
+          if (newGameState.currentPlayer !== player) {
+            newGameState.mancala[
+              player === "playerOne" ? "playerTwo" : "playerOne"
+            ]++;
+            beads--;
+          }
+        } else if (currentIndex >= 13) {
+          currentIndex = 0;
+          playerPits[currentIndex]++;
+          beads--;
+        }
+
+        currentIndex++;
       }
+
+      // Update player pits
+      if (player === "playerOne") {
+        newGameState.playerOne = playerPits;
+      } else {
+        newGameState.playerTwo = playerPits;
+      }
+
+      // Switch player
+      newGameState.currentPlayer =
+        newGameState.currentPlayer === "playerOne" ? "playerTwo" : "playerOne";
+
+      return newGameState;
+    });
+  };
+
+  // Function to make an automated move for the current player
+  const automatedMove = (player) => {
+    const currentPots =
+      player === "playerOne" ? gameState.playerOne : gameState.playerTwo;
+    const possibleMoves = currentPots.reduce((acc, count, index) => {
+      if (count > 0) acc.push(index);
+      return acc;
+    }, []);
+
+    if (possibleMoves.length > 0) {
+      const randomIndex = Math.floor(Math.random() * possibleMoves.length);
+      const potIndex = possibleMoves[randomIndex];
+      distributeBeads(player, potIndex);
+      return true;
     }
-    return allPotsOrdered[anticlockwiseIndex].id;
+    return false;
   };
 
-  //highlights the current pot with a white bckgrd color and determines the target pot
-  const handleMouseOver = (potId) => {
-    setHighlightedPot(potId);
-    const targetId = getAnticlockwisePot(potId);
-    setTargetPot(targetId);
+  // Autoplay logic
+  const autoPlayGame = () => {
+    const intervalId = setInterval(() => {
+      if (gameOver) {
+        clearInterval(intervalId);
+        return;
+      }
+
+      if (!automatedMove(gameState.currentPlayer)) {
+        // Switch player if no valid moves
+        setGameState((prevState) => ({
+          ...prevState,
+          currentPlayer:
+            prevState.currentPlayer === "playerOne" ? "playerTwo" : "playerOne",
+        }));
+      }
+    }, 1500);
+    return intervalId;
   };
 
-  //resets the highlighted pot and target pot
-  const handleMouseOut = () => {
-    setHighlightedPot(null);
-    setTargetPot(null);
-  };
+  // Generate HTML for pits dynamically
+  const generatePotHTML = (beadCounts, player) => {
+    const reversedBeadCounts =
+      player === "playerOne" ? beadCounts.slice().reverse() : beadCounts;
 
-  const switchPlayer = () => {
-    setCurrentPlayer(prev => (prev === "btmPlayer" ? "topPlayer" : "btmPlayer"));
+    return reversedBeadCounts.map((count, index) => (
+      <Pit
+        key={`p${player}${index}`}
+        count={count}
+        player={player}
+        index={index}
+        onClick={() => {
+          if (!gameOver && gameState.currentPlayer === player)
+            distributeBeads(player, player === "playerOne" ? 5 - index : index);
+        }}
+      />
+    ));
   };
 
   return (
-    <div className="papazBoard">
-      <div id="sideSection1" className="section sideSection">
-        <Mancala id="mancala1" beads={0} />
+    <div className="board">
+      <div className="section endsection">
+        <Mancala count={gameState.mancala.playerOne} player="playerOne" />
       </div>
-      <div className="section midSection">
-        <div className="midRow topRow">
-          {[...Array(6)].map((_, i) => (
-            <Pit
-              key={`topPot${i + 1}`}
-              id={`topPot${i + 1}`}
-              player="topPlayer"
-              beads={4}
-              isHighlighted={highlightedPot === `topPot${i + 1}`}
-              isTarget={targetPot === `topPot${i + 1}`}
-              onMouseOver={() => handleMouseOver(`topPot${i + 1}`)}
-              onMouseOut={handleMouseOut}
-            />
-          ))}
-        </div>
-        <div className="midRow btmRow">
-          {[...Array(6)].map((_, i) => (
-            <Pit
-              key={`btmPot${i + 1}`}
-              id={`btmPot${i + 1}`}
-              player="btmPlayer"
-              beads={4}
-              isHighlighted={highlightedPot === `btmPot${i + 1}`}
-              isTarget={targetPot === `btmPot${i + 1}`}
-              onMouseOver={() => handleMouseOver(`btmPot${i + 1}`)}
-              onMouseOut={handleMouseOut}
-            />
-          ))}
-        </div>
+      <div className="section midsection">
+        <div className="midrow botmid">{generatePotHTML(gameState.playerOne, "playerOne")}</div>
+        <div className="midrow topmid">{generatePotHTML(gameState.playerTwo, "playerTwo")}</div>
       </div>
-      <div id="sideSection3" className="section sideSection">
-        <Mancala id="mancala2" beads={0} />
+      <div className="section endsection">
+        <Mancala count={gameState.mancala.playerTwo} player="playerTwo" />
       </div>
     </div>
   );
 }
 
 export default GameBoard;
-
-
