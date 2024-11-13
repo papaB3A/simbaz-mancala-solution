@@ -119,3 +119,27 @@
 .pot.target {
   background-color: #399918;
 }
+/* PlayButton.css */
+button {
+  background-color: #4CAF50;  /* Green background */
+  color: white;               /* White text */
+  border: none;               /* Remove default border */
+  padding: 15px 32px;         /* Padding around the text */
+  text-align: center;         /* Center text horizontally */
+  text-decoration: none;      /* Remove underline */
+  display: inline-block;      /* Align the button properly */
+  font-size: 16px;            /* Text size */
+  margin: 4px 2px;            /* Small margin around the button */
+  cursor: pointer;           /* Pointer cursor on hover */
+  border-radius: 8px;         /* Rounded corners */
+  transition: background-color 0.3s, transform 0.2s; /* Smooth transition */
+}
+
+button:hover {
+  background-color: #45a049;  /* Darker green on hover */
+  transform: scale(1.05);      /* Slightly enlarge the button on hover */
+}
+
+button:active {
+  background-color: #388e3c;  /* Even darker green when clicked */
+}
