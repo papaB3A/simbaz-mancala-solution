@@ -62,13 +62,21 @@
 import React from "react";
 
 // Pit component represents a single pot or pit in the Mancala game.
-function Pit({ id, beads, onMouseOver, onMouseOut, isHighlighted, isTarget }) {
+function Pit({ id, beads, onMouseOver, onMouseOut, onClick, isHighlighted, isTarget, isDisabled }) {
   return (
     <div
       id={id}
-      className={`pot ${isHighlighted ? "highlighted" : ""} ${isTarget ? "target" : ""}`}
+      className={`pot ${isHighlighted ? "highlighted" : ""} ${isTarget ? "target" : ""} ${beads === 0 ? "empty" : ""}`}
       onMouseOver={onMouseOver}
       onMouseOut={onMouseOut}
+      onClick={!isDisabled ? onClick : undefined} // Only allow click if the pit is not disabled
+      aria-label={`Pit with ${beads} beads`}
+      tabIndex={0} // Allows keyboard navigation
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' && !isDisabled) {
+          onClick();  // Trigger onClick on Enter key for keyboard users
+        }
+      }}
     >
       <div className="beadContainer">
         {[...Array(beads)].map((_, i) => (
