@@ -143,3 +143,37 @@ button:hover {
 button:active {
   background-color: #388e3c;  /* Even darker green when clicked */
 }
+/* WinMessage.css */
+.win-message {
+  background-color: #28a745; /* Green background to signify success */
+  color: white;              /* White text */
+  text-align: center;        /* Center text */
+  padding: 20px;             /* Padding around the message */
+  border-radius: 8px;        /* Rounded corners */
+  border: 3px solid #1e7e34; /* Darker green border */
+  width: 300px;              /* Fixed width */
+  margin: 20px auto;         /* Center it horizontally */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
+  animation: pop-up 0.5s ease-in-out; /* Animation for message pop-up */
+}
+
+.win-message h1 {
+  font-size: 2em;            /* Bigger font for the win message */
+  margin: 0;                 /* Remove default margin */
+}
+
+.win-message p {
+  font-size: 1.2em;          /* Slightly bigger text for the congratulatory message */
+  margin-top: 10px;          /* Space between the h1 and the paragraph */
+}
+
+@keyframes pop-up {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
