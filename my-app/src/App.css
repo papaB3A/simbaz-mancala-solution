@@ -54,6 +54,7 @@
 .section {
   background-color: #bd9a7d;
   margin: 5px;
+  border-radius: 10px;
 }
 
 .sideSection {
