@@ -40,11 +40,16 @@
 .papazBoard {
   background-color: #914F1E;
   height: 200px;
-  width: 800px;
+  width: 700px;
   display: flex;
   padding: 20px;
   border-radius: 30px;
+  margin-left: 20px;
+  margin-right: 50px;
+  align-self: center;
+ 
 }
+
 
 .section {
   background-color: #DEAC80;
@@ -118,4 +123,96 @@
 
 .pot.target {
   background-color: #399918;
+}
+
+nav{
+  background-color:rgb(255, 251, 251);
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
+  /*border-radius: 20px;*/
+  text-align: center;
+  margin-top: 0%;
+}
+nav ul{
+  width: 100%;
+  list-style: none;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+nav li{
+  height: 100px;
+  text-align: center;
+
+}
+nav a{
+  height: 100%;
+  padding: 0 30px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  color: black;
+}
+nav a:hover{
+  background-color: #f0f0f0;
+}
+nav li:first-child{
+  margin-right: auto;
+  font-size: 50px;
+}
+body{
+background-image: url(man.jpeg) ;
+background-repeat: no-repeat;
+background-size: cover;
+
+}
+.sidebar{
+  position: fixed;
+  top: 0; 
+  right: 0;
+  height: 100vh;
+  width: 250px;
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  box-shadow: -10px 0 10px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.sidebar li{
+  width: 100%;
+}
+.sidebar a{
+  width: 100%;
+}
+.menu-button{
+  display: none;
+  margin-right: 10px;
+  padding-right: 20px;
+}
+@media(max-width: 800px){
+  .hideOnMobile{
+    display: none;
+  }
+  .menu-button{
+    display: block;
+  }
+}
+@media(max-width: 400px){
+  .sidebar{
+    width: 100%;
+  }
+}
+
+@media(max-width: 400px){
+  .papazBoard{
+    width: 100%;
+  }
+}
+
+@media(max-width: 400px) {
+  .background-image{
+    width: 100%;
+  }
 }
