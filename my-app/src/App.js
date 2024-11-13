@@ -4,6 +4,8 @@ import Instructions from "./components/Instructions.js";
 import GameBoard from "./components/GameBoard.js";
 import PlayButton from './components/GameButton.js';
 import WinMessage from './components/GameMessage.js';
+
+
 function App() {
   return (
     <div className="App">
@@ -12,7 +14,6 @@ function App() {
       <GameBoard/>
       <PlayButton/>
       <WinMessage/>
-
     </div>
   );
 }
