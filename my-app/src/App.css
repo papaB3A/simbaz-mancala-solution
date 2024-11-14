@@ -51,16 +51,24 @@
 }
 
 .inst{
-  color: black;
-  background-color: rgba(235, 110, 27, 0.541);
+  color: wheat;
   border-radius: 10px;
-  text-align: center;
+  margin-left: 100px;
+  font-size: 50px;
 }
 
 h2{
-  color: white;
-  text-align: center;
-  background-color: #75431a9a;
+  color: rgb(221, 174, 112);
+  text-align: left;
+  font-size: 30px;
+}
+
+.tile{
+  color: burlywood;
+  text-align: left;
+  margin-left: 20px;
+  font-size: 43px;
+  text-decoration: underline;
 }
 
 
