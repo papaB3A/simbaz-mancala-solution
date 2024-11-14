@@ -50,6 +50,19 @@
  
 }
 
+.inst{
+  color: black;
+  background-color: rgba(235, 110, 27, 0.541);
+  border-radius: 10px;
+  text-align: center;
+}
+
+h2{
+  color: white;
+  text-align: center;
+  background-color: #75431a9a;
+}
+
 
 .section {
   background-color: #bd9a7d;
