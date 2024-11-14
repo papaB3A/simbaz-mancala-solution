@@ -2,7 +2,7 @@ const Person = (props) => {
     return (
         <> 
             <h1 className="inst">Step: {props.step}</h1>
-            <h2>Title: {props.title}</h2>
+            <h2 className="tile">Title: {props.title}</h2>
             <h2>Content: {props.content}</h2>
         </>
     );
