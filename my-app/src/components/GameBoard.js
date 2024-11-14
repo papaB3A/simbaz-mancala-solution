@@ -25,10 +25,9 @@ function GameBoard() {
       playTurn(currentPlayer);
       if (checkGameOver()) {
         clearInterval(autoplay);
-        alert(`${currentPlayer} wins!`);
+        determineWinner();
         setIsGameOver(true);
-      } else {
-        switchPlayer();
+        setAutoplayActive(false);
       }
     }, 1000);
 
@@ -62,7 +61,10 @@ function GameBoard() {
     let pots = [...allPotsOrdered];
     const potToPlay = pots.find(pot => pot.player === player && pot.beads > 0);
 
-    if (!potToPlay) return;
+    if (!potToPlay) {
+      switchPlayer();
+      return;
+    }
 
     let beads = potToPlay.beads;
     potToPlay.beads = 0;
@@ -88,7 +90,13 @@ function GameBoard() {
       }
     }
 
-    setAllPotsOrdered([...pots]);
+    if ((player === "btmPlayer" && currentPot === 13) || (player === "topPlayer" && currentPot === 6)) {
+      // Current player gets another turn if last bead lands in their Mancala
+      setAllPotsOrdered([...pots]);
+    } else {
+      setAllPotsOrdered([...pots]);
+      switchPlayer();
+    }
   };
 
   // Switch the current player
@@ -102,6 +110,20 @@ function GameBoard() {
     const topPotsEmpty = allPotsOrdered.slice(0, 6).every(pot => pot.beads === 0);
 
     return btmPotsEmpty || topPotsEmpty;
+  };
+
+  // Determine the winner based on Mancala bead count
+  const determineWinner = () => {
+    const topMancalaBeads = getMancalaBeads("mancala2");
+    const btmMancalaBeads = getMancalaBeads("mancala1");
+
+    if (topMancalaBeads > btmMancalaBeads) {
+      alert("Top Player wins!");
+    } else if (btmMancalaBeads > topMancalaBeads) {
+      alert("Bottom Player wins!");
+    } else {
+      alert("It's a tie!");
+    }
   };
 
   // Highlights the current pot with a white background color and determines the target pot
@@ -139,8 +161,10 @@ function GameBoard() {
 
   // Start autoplay
   const startAutoplay = () => {
-    setAutoplayActive(true);
+    setAllPotsOrdered(generatePots());
+    setCurrentPlayer("btmPlayer");
     setIsGameOver(false);
+    setAutoplayActive(true);
   };
 
   // Stop autoplay
