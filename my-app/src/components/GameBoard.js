@@ -21,15 +21,7 @@ function GameBoard() {
     return () => clearInterval(autoplayInterval);
   }, []);
 
-  // Check if the game is over whenever gameState changes
-  useEffect(() => {
-    const playerOneEmpty = gameState.playerOne.every((count) => count === 0);
-    const playerTwoEmpty = gameState.playerTwo.every((count) => count === 0);
-
-    if (playerOneEmpty || playerTwoEmpty) {
-      endGame();
-    }
-  }, [gameState, endGame]);
+  
 
   // Memoized endGame function to avoid re-creating it on every render
   const endGame = useCallback(() => {
@@ -58,6 +50,16 @@ function GameBoard() {
       `Game Over! ${winner} wins with ${playerOneTotal} (p1) vs ${playerTwoTotal} (p2)`
     );
   }, [gameState, autoplayInterval]);
+
+  // Check if the game is over whenever gameState changes
+  useEffect(() => {
+    const playerOneEmpty = gameState.playerOne.every((count) => count === 0);
+    const playerTwoEmpty = gameState.playerTwo.every((count) => count === 0);
+
+    if (playerOneEmpty || playerTwoEmpty) {
+      endGame();
+    }
+  }, [gameState, endGame]);
 
   // Function to distribute beads when a pit is clicked
   const distributeBeads = (player, index) => {
