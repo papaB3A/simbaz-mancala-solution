@@ -27,9 +27,13 @@ const Header = () => {
             </a>
           </li>
           <li><a href='#'><strong>MANCALA</strong></a></li>
+          <li><a href='Instructions.js'><strong>INSTRUCTIONS</strong></a></li>
+          <li><a href='GameBoard.js'><strong>GAME SIMULATION</strong></a></li>
         </ul>
         <ul>
           <li><a href='#'><strong>MANCALA</strong></a></li>
+          <li class="hideOnMobile"><a href='Instructions.js'><strong>INSTRUCTIONS</strong></a></li>
+          <li class="hideOnMobile"><a href='GameBoard.js'><strong>GAME SIMULATION</strong></a></li>
           <li className="menu-button">
             <a href="#" onClick={showSidebar}>
               <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 96 960 960" width="48">
