@@ -29,7 +29,7 @@ function GameBoard() {
         setIsGameOver(true);
         setAutoplayActive(false);
       }
-    }, 1000);
+    }, 500);
 
     return () => clearInterval(autoplay);
   }, [currentPlayer, allPotsOrdered, isGameOver, autoplayActive]);
@@ -55,49 +55,62 @@ function GameBoard() {
     const mancala = allPotsOrdered.find(pot => pot.id === id);
     return mancala ? mancala.beads : 0;
   };
-
-  // Simulate the turn of the current player
   const playTurn = (player) => {
     let pots = [...allPotsOrdered];
-    const potToPlay = pots.find(pot => pot.player === player && pot.beads > 0);
+    const eligiblePots = pots.filter(pot => pot.player === player && pot.beads > 0 && pot.type !== "mancala");
 
-    if (!potToPlay) {
+    if (eligiblePots.length === 0) {
       switchPlayer();
       return;
     }
 
+    // Choose a random pot with beads for autoplay
+    const randomPotIndex = Math.floor(Math.random() * eligiblePots.length);
+    const potToPlay = eligiblePots[randomPotIndex];
+
+
     let beads = potToPlay.beads;
     potToPlay.beads = 0;
     let currentIndex = pots.indexOf(potToPlay);
-    let currentPot = currentIndex;
 
+    let currentPot = currentIndex;
     while (beads > 0) {
       currentPot = (currentPot + 1) % pots.length;
       const nextPot = pots[currentPot];
 
-      if (nextPot.type !== "mancala" || (player === "btmPlayer" && currentPot !== 13) || (player === "topPlayer" && currentPot !== 6)) {
-        pots[currentPot].beads += 1;
-        beads--;
+      // Skip opponent's mancala
+      if ((player === "btmPlayer" && nextPot.id === "mancala2") || (player === "topPlayer" && nextPot.id === "mancala1")) {
+        continue;
       }
+
+      nextPot.beads++;
+      beads--;
     }
 
-    if (pots[currentPot].beads === 1 && pots[currentPot].type !== "mancala" && pots[currentPot].player === player) {
+    const lastPot = pots[currentPot];
+
+    // Last bead in own empty pot rule
+    if (lastPot.beads === 1 && lastPot.type !== "mancala" && lastPot.player === player) {
       const oppositePotIndex = 12 - currentPot;
       const oppositePot = pots[oppositePotIndex];
-      if (oppositePot.beads > 0) {
-        pots[currentPot].beads += oppositePot.beads;
+      if (oppositePot && oppositePot.beads > 0) { // Check if oppositePot exists
+        lastPot.beads += oppositePot.beads;
         oppositePot.beads = 0;
       }
     }
 
-    if ((player === "btmPlayer" && currentPot === 13) || (player === "topPlayer" && currentPot === 6)) {
-      // Current player gets another turn if last bead lands in their Mancala
-      setAllPotsOrdered([...pots]);
-    } else {
-      setAllPotsOrdered([...pots]);
-      switchPlayer();
+    // Free turn rule
+    const playerMancalaId = player === "btmPlayer" ? "mancala1" : "mancala2";
+    if (lastPot.id === playerMancalaId) {
+      setAllPotsOrdered([...pots]); // Update state and let the same player play again
+      return; // Don't switch players
     }
+
+
+    setAllPotsOrdered([...pots]);
+    switchPlayer();
   };
+  
 
   // Switch the current player
   const switchPlayer = () => {
@@ -108,6 +121,26 @@ function GameBoard() {
   const checkGameOver = () => {
     const btmPotsEmpty = allPotsOrdered.slice(7, 13).every(pot => pot.beads === 0);
     const topPotsEmpty = allPotsOrdered.slice(0, 6).every(pot => pot.beads === 0);
+
+    if (btmPotsEmpty) {
+      let topPlayerRemainingBeads = 0;
+      for (let i = 0; i < 6; i++) {
+        topPlayerRemainingBeads += allPotsOrdered[i].beads;
+        allPotsOrdered[i].beads = 0;
+      }
+      const mancala2 = allPotsOrdered.find(pot => pot.id === "mancala2");
+      mancala2.beads += topPlayerRemainingBeads;
+    } else if (topPotsEmpty) {
+      let btmPlayerRemainingBeads = 0;
+      for (let i = 7; i < 13; i++) {
+        btmPlayerRemainingBeads += allPotsOrdered[i].beads;
+        allPotsOrdered[i].beads = 0;
+      }
+      const mancala1 = allPotsOrdered.find(pot => pot.id === "mancala1");
+      mancala1.beads += btmPlayerRemainingBeads;
+    }
+
+    setAllPotsOrdered([...allPotsOrdered]);
 
     return btmPotsEmpty || topPotsEmpty;
   };
