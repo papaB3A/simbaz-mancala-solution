@@ -215,8 +215,8 @@ function GameBoard() {
 
       {/* Buttons outside the game board */}
       <div className="buttonContainer">
-        <button onClick={startAutoplay} disabled={autoplayActive || isGameOver}>Start Autoplay</button>
-        <button onClick={stopAutoplay} disabled={!autoplayActive}>Stop Autoplay</button>
+        <button onClick={startAutoplay} disabled={autoplayActive || isGameOver}></button>
+        <button className="pause" onClick={stopAutoplay} disabled={!autoplayActive}></button>
       </div>
     </div>
   );

@@ -238,9 +238,9 @@ background-size: cover;
 /* PlayButton.css */
 button {
 background-color: #7e4517;   /*Green background */
-  color: white;               /* White text */
+  color: rgb(15, 11, 11);               /* White text */
   border: none;               /* Remove default border */
-  padding:40px;         /* Padding around the text */
+  padding: 40px;        /* Padding around the text */
   text-decoration: none;      /* Remove underline */
   display: inline-block;      /* Align the button properly */
   font-size: 20px;            /* Text size */
@@ -249,11 +249,30 @@ background-color: #7e4517;   /*Green background */
   cursor: pointer;           /* Pointer cursor on hover */
   border-radius: 8px;         /* Rounded corners */
   transition: background-color 0.3s, transform 0.2s;
-  align-self:center;
   background-image: url(play.png);
   background-size:contain;
   background-repeat: no-repeat;
+  margin-bottom: 30px;
 }
+
+.pause{
+  background-color: #7e4517;   /*Green background */
+    color: rgb(15, 11, 11);               /* White text */
+    border:none;               /* Remove default border */
+    padding: 40px;        /* Padding around the text */
+    text-decoration: none;      /* Remove underline */
+    display: inline-block;      /* Align the button properly */
+    font-size: 20px;            /* Text size */
+    margin-left: 60px;
+    margin-top: 20px;            /* Small margin around the button */
+    cursor: pointer;           /* Pointer cursor on hover */
+    border-radius: 8px;         /* Rounded corners */
+    transition: background-color 0.3s, transform 0.2s;
+    background-image: url(pause.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-bottom: 30px;
+  }
 
 button:hover {
   background-color: #ac825b;  /* Darker green on hover */
