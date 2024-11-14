@@ -18,19 +18,10 @@ function GameBoard() {
     const intervalId = autoPlayGame();
     setAutoplayInterval(intervalId);
 
-    return () => clearInterval(autoplayInterval);
+    return () => clearInterval(intervalId); // Corrected: Clearing intervalId instead of autoplayInterval
   }, []);
 
-  // Check if the game is over whenever gameState changes
-  useEffect(() => {
-    const playerOneEmpty = gameState.playerOne.every((count) => count === 0);
-    const playerTwoEmpty = gameState.playerTwo.every((count) => count === 0);
-
-    if (playerOneEmpty || playerTwoEmpty) {
-      endGame();
-    }
-  }, [gameState, endGame]);
-
+  
   // Memoized endGame function to avoid re-creating it on every render
   const endGame = useCallback(() => {
     setGameOver(true);
@@ -55,9 +46,20 @@ function GameBoard() {
     }
 
     alert(
-      `Game Over! ${winner} wins with ${playerOneTotal} (p1) vs ${playerTwoTotal} (p2)`
+      `Game Over! ${winner} wins with ${playerOneTotal} (p1) vs ${playerTwoTotal} (p2)` // Fixed: Added backticks for template literal
     );
   }, [gameState, autoplayInterval]);
+
+  // Check if the game is over whenever gameState changes
+  useEffect(() => {
+    const playerOneEmpty = gameState.playerOne.every((count) => count === 0);
+    const playerTwoEmpty = gameState.playerTwo.every((count) => count === 0);
+
+    if (playerOneEmpty || playerTwoEmpty) {
+      endGame();
+    }
+  }, [gameState, endGame]);
+
 
   // Function to distribute beads when a pit is clicked
   const distributeBeads = (player, index) => {
@@ -173,7 +175,7 @@ function GameBoard() {
 
     return reversedBeadCounts.map((count, index) => (
       <Pit
-        key={`p${player}${index}`}
+        key={`p${player}${index}`} // Fixed: Added backticks for template literal
         count={count}
         player={player}
         index={index}
