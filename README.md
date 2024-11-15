@@ -16,6 +16,7 @@ where players can learn the traditional gameplay mechanics in a modern setting.
 - [Technologies Used](#technologies-used)
 - [How to Play](#how-to-play)
 - [Contributing](#contributing)
+- [Support and contact details](#support-and-contact-details)
 - [License](#license)
 
 ## Introduction
